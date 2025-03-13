@@ -3,13 +3,15 @@ This repository contains my work used for my project in STA2453. My project focu
 
 ### Repository Structure
 
-- **`Code/`**: Contains Jupyter notebooks for:
+- **`Code/`**: Contains Jupyter notebooks for the following components in my analysis:
   - Data preprocessing: `data_preprocessing.ipynb`
   - Clustering analysis using DBSCAN: `dbscan.ipynb`
-  - Outlier detection via IQR: `iqr.ipynb`
+  - Outlier detection using IQR: `iqr.ipynb`
 
 - **`Data/`**: Includes raw and processed datasets:
   - `0131799991.csv`: Original dataset
+  - `cleaned_star_data_with_differencing.csv`: Processed TESS data with differencing operator
+  - `cleaned_star_data_with_smoothing.csv`: Processed TESS data with smoothing operator
   - `cleaned_tess_data.csv`: Processed TESS data
   - `detected_flares_tuned.csv`: Final detected flares
 
