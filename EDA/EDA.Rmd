@@ -1,0 +1,1 @@
+This file contains exploratory data analysis for detecting stellar flares in TESS mission data.
