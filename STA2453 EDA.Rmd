@@ -1,0 +1,123 @@
+---
+title: "STA2453 Exploratory Data Analysis for TIC 0131799991"
+author: "Nevena Ciganovic"
+date: "2025-02-19"
+output:
+  pdf_document:
+    latex_engine: xelatex
+  html_document: default
+header-includes:
+  - \usepackage{enumitem}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Scatter Plot and Time Series Plot of Log-Tranformed Data
+We will produce a scatter plot and time series plot to examine the brightness of TIC 0131799991 with respect to time. The data will be transformed using the log scale, as this allows us to stabilize the variance by reducing the impact of extreme values in the data set. Thus allows the models we use to detect patterns and make predictions accurately.
+```{r }
+library(ggplot2)
+
+# Read csv file
+star = read.csv("0131799991.csv")
+
+# Extract time and pdcsap_flux data
+time = star$time
+flux = star$pdcsap_flux
+
+# Remove NA values
+filtered_data = complete.cases(time, flux)
+time = time[filtered_data]
+flux = flux[filtered_data]
+
+# Log-Transformed Data
+flux = log(flux)
+
+# Scatter plot
+plot(time, flux, col = "cyan4", pch = 20, xlab = "time", ylab = "log(flux)", 
+     main = "Scatter Plot of TIC 0131799991 Brightness")
+
+# Time series plot
+star_ts = ts(flux)
+plot(time, flux, col = "royalblue3", type = "l", xlab = "time", ylab = "log(flux)",
+     main = "Time Series of TIC 0131799991 Brightness")
+
+```
+\newpage
+Examining the plots of the log-transformed data, we can immediately notice that the overall trend looks relatively stable, as there are no significant long-term increases or decreases in the star's brightness. Hence, we can assume that the data is stationary but, we will conduct a test to confirm this assumption. Furthermore, the principle question of interest for my analysis is "How can we detect stellar flares from TESS mission photometric data?". In a time series plot, a stellar flare is usually characterized by a sharp, upward spike, followed by an exponential decay. If we examine the time series plot above, we can see that there are two extreme spikes in the data, one occurring at approximately 1521 days, and the other occurring at approximately 1540 days. We can assume that these two points are stellar flares but, we will need to conduct further analysis to determine whether they are indeed stellar flares.
+
+# Correlogram of Log-Tranformed Data
+We will produce a correlogram of the log-transformed data to examine auto correlations in the time series at different lags.
+```{r}
+# Correlogram
+acf(flux, main = "Correlogram of TIC 0131799991 Brightness", lag.max = 50)
+```
+
+Examining the correlogram, we can see that the auto correlations decay slowly as the lag increases. The ACF values are almost all above the blue dotted lines, which indicates that there are significant auto correlations present in the data. This suggests periodicity in the brightness of the star, which may be useful to predict when future stellar flares might occur.
+
+# Boxplot
+We will produce a boxplot to visualize the spread of the data and examine its outliers. 
+
+```{r}
+# Boxplot to visualize outliers
+boxplot(flux, main = "Boxplot of TIC 0131799991 Brightness", ylab = "Log(Flux)")
+```
+
+From the above boxplot, we can see that the outliers in the plot correspond to the points in the scatter plot which are suspected stellar flares. Hence, confirming our hypothesis that there are two stellar flares in the data.
+
+
+# Tests for Normality
+
+```{r}
+library(ggplot2)
+
+# Convert flux_log to a dataframe
+df <- data.frame(flux_log = flux_log)
+
+# Create histogram with density curve
+ggplot(df, aes(x = flux_log)) +
+  geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black", alpha = 0.7) +
+  geom_density(color = "blue", linewidth = 1) +
+  labs(title = "Histogram of Log-Flux with Density Curve",
+       x = "Log-Flux",
+       y = "Density") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14))
+
+# Create a Q-Q plot using ggplot2
+ggplot(df, aes(sample = flux_log)) +
+  stat_qq() +
+  stat_qq_line(color = "red", linewidth = 1) +
+  labs(title = "Q-Q Plot of Log-Flux",
+       x = "Theoretical Quantiles",
+       y = "Sample Quantiles") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14))
+
+library(nortest)  # For Anderson-Darling and Lilliefors tests
+library(moments)  # For Jarque-Bera test
+library(DescTools)  # For D'Agostino test
+
+# Anderson-Darling Test
+ad_result <- ad.test(flux)
+print(paste("Anderson-Darling Test: p-value =", ad_result$p.value))
+
+# Lilliefors Test
+lillie_result <- lillie.test(flux)
+print(paste("Lilliefors Test: p-value =", lillie_result$p.value))
+
+# Jarque-Bera Test (checks skewness & kurtosis)
+jb_result <- jarque.test(flux)
+print(paste("Jarque-Bera Test: p-value =", jb_result$p.value))
+
+
+# Decision: If p-value > 0.05 in multiple tests, assume Gaussian distribution
+if (ks_result$p.value > 0.05 & lillie_result$p.value > 0.05) {
+  print("Data appears to be Gaussian")
+} else {
+  print("Data does not appear to be Gaussian")
+}
+
+```
+
