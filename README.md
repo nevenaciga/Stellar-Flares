@@ -4,9 +4,11 @@
 
 This project investigates the detection of stellar flares in photometric data collected by the Transiting Exoplanet Survey Satellite (TESS). Stellar flares are sudden bursts of electromagnetic radiation caused by the release of magnetic energy in a star's atmosphere. Detecting these events is important for understanding stellar magnetic activity, exoplanet habitability, and the physical processes governing stellar behavior.
 
-Using time-series analysis and unsupervised learning techniques, this project develops methods for automatically identifying flare events in TESS light curves. The analysis focuses on star **TIC 0131799991** and compares two flare detection approaches: **Density-Based Spatial Clustering of Applications with Noise (DBSCAN)** and **Interquartile Range (IQR) outlier detection**. Additional preprocessing techniques, including smoothing and differencing, are used to reduce noise and remove deterministic trends from the data. :contentReference[oaicite:0]{index=0}
+Using time-series analysis and unsupervised learning techniques, this project develops methods for automatically identifying flare events in TESS light curves. The analysis focuses on star **TIC 0131799991** and compares two flare detection approaches: **Density-Based Spatial Clustering of Applications with Noise (DBSCAN)** and **Interquartile Range (IQR) outlier detection**. Additional preprocessing techniques, including smoothing and differencing, are used to reduce noise and remove deterministic trends from the data.
 
-![Flare Detection Example](figures/fig6.png)
+![Detected Stellar Flares in TIC 0131799991](figures/iqr+smoothing+differencing.png)
+
+*Figure 1. Final stellar flare detections obtained using IQR-based anomaly detection after applying smoothing and differencing to the TESS light curve.*
 
 ---
 
